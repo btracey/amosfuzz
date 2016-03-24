@@ -71,6 +71,7 @@ C     SIGNIFICANCE WHEN FNU OR N IS LARGE
 C-----------------------------------------------------------------------
       INU = INT(SNGL(FNU))
       ARG = (FNU-DBLE(FLOAT(INU)))*PI
+      print *, "INU, ARG", INU, ARG
       INU = INU + N - IL
       AK = -DSIN(ARG)
       BK = DCOS(ARG)
@@ -82,6 +83,7 @@ C-----------------------------------------------------------------------
       P1I = -P1I
    30 CONTINUE
       DO 70 K=1,IL
+        print *, "fort zaysi k= ",K
         SQK = FDN - 1.0D0
         ATOL = S*DABS(SQK)
         SGN = 1.0D0
@@ -96,6 +98,7 @@ C-----------------------------------------------------------------------
         BB = AEZ
         DKR = EZR
         DKI = EZI
+        print *, "preloop", CKR, CKI, DKR, DKI, SQK
         DO 40 J=1,JL
           CALL ZDIV(CKR, CKI, DKR, DKI, STR, STI)
           CKR = STR*SQK
@@ -111,25 +114,39 @@ C-----------------------------------------------------------------------
           BB = BB + AEZ
           AK = AK + 8.0D0
           SQK = SQK - AK
-          IF (AA.LE.ATOL) GO TO 50
+            print *, "j str sti", J, CS1R, CS1I
+          IF (AA.LE.ATOL) THEN
+            GO TO 50
+          END IF
    40   CONTINUE
         GO TO 110
    50   CONTINUE
+        print *, "Fifty"
         S2R = CS1R
         S2I = CS1I
+        print *, "S2R, S2I", S2R, S2I
         IF (ZR+ZR.GE.ELIM) GO TO 60
         TZR = ZR + ZR
         TZI = ZI + ZI
         CALL ZEXP(-TZR, -TZI, STR, STI)
+        print *, "STR, STI one", STR, STI
         CALL ZMLT(STR, STI, P1R, P1I, STR, STI)
+        print *, "STR, STI two", STR, STI
         CALL ZMLT(STR, STI, CS2R, CS2I, STR, STI)
+        print *, "STR, STI three", STR, STI
         S2R = S2R + STR
         S2I = S2I + STI
+        print *, "pre 60", S2R, S2I
    60   CONTINUE
+        print *, "Sixty"
+        print *,"ak1r, ak1i", AK1R, AK1I
         FDN = FDN + 8.0D0*DFNU + 4.0D0
         P1R = -P1R
         P1I = -P1I
         M = N - IL + K
+        print *, "M = ", M
+        print *, "YR", S2R, AK1R, S2I, AK1I
+        print *, S2R*AK1R-S2I*AK1I, S2R*AK1I+S2I*AK1R
         YR(M) = S2R*AK1R - S2I*AK1I
         YI(M) = S2R*AK1I + S2I*AK1R
    70 CONTINUE

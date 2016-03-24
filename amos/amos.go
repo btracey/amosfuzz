@@ -1,6 +1,7 @@
 package amos
 
 import (
+	"fmt"
 	"math"
 	"math/cmplx"
 )
@@ -38,7 +39,7 @@ func max0(a, b int) int {
 	return b
 }
 
-func zairy(ZR, ZI float64, ID, KODE int) (AIR, AII float64, NZ int) {
+func Zairy(ZR, ZI float64, ID, KODE int) (AIR, AII float64, NZ int) {
 	// zairy is adapted from the original Netlib code by Donald Amos.
 	// http://www.netlib.no/netlib/amos/zairy.f
 
@@ -282,6 +283,7 @@ Fourty:
 	AIR = S1R*C1 - C2*(ZR*S2R-ZI*S2I)
 	AII = S1I*C1 - C2*(ZR*S2I+ZI*S2R)
 	if KODE == 1 {
+		fmt.Println("zairy 40")
 		return
 	}
 	tmp = cmplx.Sqrt(complex(ZR, ZI))
@@ -295,6 +297,7 @@ Fourty:
 	PTR = AIR*STR - AII*STI
 	AII = AIR*STI + AII*STR
 	AIR = PTR
+	fmt.Println("zairy 40 2")
 	return
 
 Fifty:
@@ -311,6 +314,7 @@ Fifty:
 
 Sixty:
 	if KODE == 1 {
+		fmt.Println("zairy 60")
 		return
 	}
 	tmp = cmplx.Sqrt(complex(ZR, ZI))
@@ -324,6 +328,7 @@ Sixty:
 	PTR = STR*AIR - STI*AII
 	AII = STR*AII + STI*AIR
 	AIR = PTR
+	fmt.Println("zairy 60 2")
 	return
 
 	// CASE FOR CABS(Z)>1.0.
@@ -419,11 +424,17 @@ OneHundred:
 	if ZI < 0.0E0 {
 		MR = -1
 	}
-	zacai(ZTAR, ZTAI, FNU, KODE, MR, 1, CYR, CYI, NN, RL, TOL, ELIM, ALIM)
+	fmt.Println("100")
+	fmt.Println(ZTAR, ZTAI, FNU, KODE)
+	ZTAR, ZTAI, FNU, KODE, MR, _, CYR, CYI, NN, RL, TOL, ELIM, ALIM = Zacai(ZTAR, ZTAI, FNU, KODE, MR, 1, CYR, CYI, NN, RL, TOL, ELIM, ALIM)
+	fmt.Println("after zacai")
+	fmt.Println(ZTAR, ZTAI, FNU, KODE)
+	fmt.Println(MR, CYR, CYI)
 	if NN < 0 {
 		goto TwoEighty
 	}
 	NZ = NZ + NN
+	fmt.Println("zairy 100 130")
 	goto OneThirty
 
 OneTen:
@@ -442,7 +453,7 @@ OneTen:
 		goto TwoTen
 	}
 OneTwenty:
-	zbknu(ZTAR, ZTAI, FNU, KODE, 1, CYR, CYI, NZ, TOL, ELIM, ALIM)
+	ZTAR, ZTAI, FNU, KODE, _, CYR, CYI, NZ, TOL, ELIM, ALIM = Zbknu(ZTAR, ZTAI, FNU, KODE, 1, CYR, CYI, NZ, TOL, ELIM, ALIM)
 
 OneThirty:
 	S1R = CYR[1] * COEF
@@ -455,10 +466,12 @@ OneThirty:
 	}
 	AIR = CSQR*S1R - CSQI*S1I
 	AII = CSQR*S1I + CSQI*S1R
+	fmt.Println("zairy 130")
 	return
 OneFourty:
 	AIR = -(ZR*S1R - ZI*S1I)
 	AII = -(ZR*S1I + ZI*S1R)
+	fmt.Println("zairy 140")
 	return
 OneFifty:
 	S1R = S1R * SFAC
@@ -471,6 +484,7 @@ OneFifty:
 	S1R = STR
 	AIR = S1R / SFAC
 	AII = S1I / SFAC
+	fmt.Println("zairy 150")
 	return
 OneSixty:
 	STR = -(S1R*ZR - S1I*ZI)
@@ -478,6 +492,7 @@ OneSixty:
 	S1R = STR
 	AIR = S1R / SFAC
 	AII = S1I / SFAC
+	fmt.Println("zairy 160")
 	return
 OneSeventy:
 	AA = 1.0E+3 * dmach[1]
@@ -494,6 +509,7 @@ OneSeventy:
 OneEighty:
 	AIR = C1 - S1R
 	AII = -S1I
+	fmt.Println("zairy 180")
 	return
 OneNinety:
 	AIR = -C2
@@ -507,15 +523,18 @@ OneNinety:
 TwoHundred:
 	AIR = AIR + C1*S1R
 	AII = AII + C1*S1I
+	fmt.Println("zairy 200")
 	return
 TwoTen:
 	NZ = 1
 	AIR = ZEROR
 	AII = ZEROI
+	fmt.Println("zairy 210")
 	return
 TwoSeventy:
 	NZ = 0
 	IERR = 2
+	fmt.Println("zairy 270")
 	return
 TwoEighty:
 	if NN == (-1) {
@@ -523,15 +542,17 @@ TwoEighty:
 	}
 	NZ = 0
 	IERR = 5
+	fmt.Println("zairy 280")
 	return
 TwoSixty:
 	IERR = 4
 	NZ = 0
+	fmt.Println("zairy 260")
 	return
 }
 
 // sbknu computes the k bessel function in the right half z plane.
-func zbknu(ZR, ZI, FNU float64, KODE, N int, YR, YI []float64, NZ int, TOL, ELIM, ALIM float64) (ZRout, ZIout, FNUout float64, KODEout, Nout int, YRout, YIout []float64, NZout int, TOLout, ELIMout, ALIMout float64) {
+func Zbknu(ZR, ZI, FNU float64, KODE, N int, YR, YI []float64, NZ int, TOL, ELIM, ALIM float64) (ZRout, ZIout, FNUout float64, KODEout, Nout int, YRout, YIout []float64, NZout int, TOLout, ELIMout, ALIMout float64) {
 	/* Old dimension comment.
 		DIMENSION YR(N), YI(N), CC(8), CSSR(3), CSRR(3), BRY(3), CYR(2),
 	     * CYI(2)
@@ -615,7 +636,7 @@ func zbknu(ZR, ZI, FNU float64, KODE, N int, YR, YI []float64, NZ int, TOL, ELIM
 	SMUI = imag(tmp)
 	FMUR = SMUR * DNU
 	FMUI = SMUI * DNU
-	zshch(FMUR, FMUI, CSHR, CSHI, CCHR, CCHI)
+	FMUR, FMUI, CSHR, CSHI, CCHR, CCHI = Zshch(FMUR, FMUI, CSHR, CSHI, CCHR, CCHI)
 	if DNU == 0.0E0 {
 		goto Ten
 	}
@@ -1115,7 +1136,7 @@ TwoSixtyOne:
 		P2M = math.Exp(P2R) / TOL
 		P1R = P2M * math.Cos(P2I)
 		P1I = P2M * math.Sin(P2I)
-		zuchk(P1R, P1I, NW, ASCLE, TOL)
+		P1R, P1I, NW, ASCLE, TOL = Zuchk(P1R, P1I, NW, ASCLE, TOL)
 		if NW != 0 {
 			goto TwoSixtyThree
 		}
@@ -1170,7 +1191,7 @@ TwoSeventy:
 	YI[2] = S2I
 TwoEighty:
 	ASCLE = BRY[1]
-	zkscl(ZDR, ZDI, FNU, N, YR, YI, NZ, RZR, RZI, ASCLE, TOL, ELIM)
+	ZDR, ZDI, FNU, N, YR, YI, NZ, RZR, RZI, ASCLE, TOL, ELIM = Zkscl(ZDR, ZDI, FNU, N, YR, YI, NZ, RZR, RZI, ASCLE, TOL, ELIM)
 	INU = N - NZ
 	if INU <= 0 {
 		return ZR, ZI, FNU, KODE, N, YR, YI, NZ, TOL, ELIM, ALIM
@@ -1221,7 +1242,7 @@ ThreeTen:
 // SET K FUNCTIONS TO ZERO ON UNDERFLOW, CONTINUE RECURRENCE
 // ON SCALED FUNCTIONS UNTIL TWO MEMBERS COME ON SCALE, THEN
 // return WITH MIN(NZ+2,N) VALUES SCALED BY 1/TOL.
-func zkscl(ZRR, ZRI, FNU float64, N int, YR, YI []float64, NZ int, RZR, RZI, ASCLE, TOL, ELIM float64) (
+func Zkscl(ZRR, ZRI, FNU float64, N int, YR, YI []float64, NZ int, RZR, RZI, ASCLE, TOL, ELIM float64) (
 	ZRRout, ZRIout, FNUout float64, Nout int, YRout, YIout []float64, NZout int, RZRout, RZIout, ASCLEout, TOLout, ELIMout float64) {
 	var ACS, AS, CKI, CKR, CSI, CSR, FN, STR, S1I, S1R, S2I,
 		S2R, ZEROI, ZEROR, ZDR, ZDI, CELMR, ELM, HELIM, ALAS float64
@@ -1257,7 +1278,7 @@ func zkscl(ZRR, ZRI, FNU float64, N int, YR, YI []float64, NZ int, RZR, RZI, ASC
 		STR = math.Exp(CSR) / TOL
 		CSR = STR * math.Cos(CSI)
 		CSI = STR * math.Sin(CSI)
-		zuchk(CSR, CSI, NW, ASCLE, TOL)
+		CSR, CSI, NW, ASCLE, TOL = Zuchk(CSR, CSI, NW, ASCLE, TOL)
 		if NW != 0 {
 			continue
 		}
@@ -1324,7 +1345,7 @@ Twenty:
 		STR = math.Exp(CSR) / TOL
 		CSR = STR * math.Cos(CSI)
 		CSI = STR * math.Sin(CSI)
-		zuchk(CSR, CSI, NW, ASCLE, TOL)
+		CSR, CSI, NW, ASCLE, TOL = Zuchk(CSR, CSI, NW, ASCLE, TOL)
 		if NW != 0 {
 			goto TwentyFive
 		}
@@ -1364,7 +1385,7 @@ FourtyFive:
 // ZSHCH COMPUTES THE COMPLEX HYPERBOLIC FUNCTIONS CSH=SINH(X+iY) AND
 // CCH=COSH(X+I*Y), WHERE I**2=-1.
 // TODO(btracey): use cmplx.Sinh and cmplx.Cosh.
-func zshch(ZR, ZI, CSHR, CSHI, CCHR, CCHI float64) (ZRout, ZIout, CSHRout, CSHIout, CCHRout, CCHIout float64) {
+func Zshch(ZR, ZI, CSHR, CSHI, CCHR, CCHI float64) (ZRout, ZIout, CSHRout, CSHIout, CCHRout, CCHIout float64) {
 	var CH, CN, SH, SN float64
 	SH = math.Sinh(ZR)
 	CH = math.Cosh(ZR)
@@ -1384,7 +1405,7 @@ func zshch(ZR, ZI, CSHR, CSHI, CCHR, CCHI float64) (ZRout, ZIout, CSHRout, CSHIo
 // if THE UNDERFLOW IS AT LEAST ONE PRECISION BELOW THE MAGNITUDE
 // OF THE LARGEST COMPONENT; OTHERWISE THE PHASE ANGLE DOES NOT HAVE
 // ABSOLUTE ACCURACY AND AN UNDERFLOW IS ASSUMED.
-func zuchk(YR, YI float64, NZ int, ASCLE, TOL float64) (YRout, YIout float64, NZout int, ASCLEout, TOLout float64) {
+func Zuchk(YR, YI float64, NZ int, ASCLE, TOL float64) (YRout, YIout float64, NZout int, ASCLEout, TOLout float64) {
 	var SS, ST, WR, WI float64
 	NZ = 0
 	WR = math.Abs(YR)
@@ -1411,7 +1432,7 @@ func zuchk(YR, YI float64, NZ int, ASCLE, TOL float64) (YRout, YIout float64, NZ
 // ZACAI IS THE SAME AS ZACON WITH THE PARTS FOR LARGER ORDERS AND
 // RECURRENCE REMOVED. A RECURSIVE CALL TO ZACON CAN RESULT if ZACON
 // IS CALLED FROM ZAIRY.
-func zacai(ZR, ZI, FNU float64, KODE, MR, N int, YR, YI []float64, NZ int, RL, TOL, ELIM, ALIM float64) (
+func Zacai(ZR, ZI, FNU float64, KODE, MR, N int, YR, YI []float64, NZ int, RL, TOL, ELIM, ALIM float64) (
 	ZRout, ZIout, FNUout float64, KODEout, MRout, Nout int, YRout, YIout []float64, NZout int, RLout, TOLout, ELIMout, ALIMout float64) {
 	// COMPLEX CSGN,CSPN,C1,C2,Y,Z,ZN,CY
 	var ARG, ASCLE, AZ, CSGNR, CSGNI, CSPNR,
@@ -1435,8 +1456,9 @@ func zacai(ZR, ZI, FNU float64, KODE, MR, N int, YR, YI []float64, NZ int, RL, T
 		goto Twenty
 	}
 Ten:
+	fmt.Println("Zacai 10")
 	// POWER SERIES FOR THE I FUNCTION.
-	zseri(ZNR, ZNI, FNU, KODE, NN, YR, YI, NW, TOL, ELIM, ALIM)
+	ZNR, ZNI, FNU, KODE, NN, YR, YI, NW, TOL, ELIM, ALIM = Zseri(ZNR, ZNI, FNU, KODE, NN, YR, YI, NW, TOL, ELIM, ALIM)
 	goto Fourty
 Twenty:
 	if AZ < RL {
@@ -1444,20 +1466,20 @@ Twenty:
 	}
 
 	// ASYMPTOTIC EXPANSION FOR LARGE Z FOR THE I FUNCTION.
-	zasyi(ZNR, ZNI, FNU, KODE, NN, YR, YI, NW, RL, TOL, ELIM, ALIM)
+	ZNR, ZNI, FNU, KODE, NN, YR, YI, NW, RL, TOL, ELIM, ALIM = Zasyi(ZNR, ZNI, FNU, KODE, NN, YR, YI, NW, RL, TOL, ELIM, ALIM)
 	if NW < 0 {
 		goto Eighty
 	}
 	goto Fourty
 Thirty:
 	// MILLER ALGORITHM NORMALIZED BY THE SERIES FOR THE I FUNCTION
-	zmlri(ZNR, ZNI, FNU, KODE, NN, YR, YI, NW, TOL)
+	ZNR, ZNI, FNU, KODE, NN, YR, YI, NW, TOL = Zmlri(ZNR, ZNI, FNU, KODE, NN, YR, YI, NW, TOL)
 	if NW < 0 {
 		goto Eighty
 	}
 Fourty:
 	// ANALYTIC CONTINUATION TO THE LEFT HALF PLANE FOR THE K FUNCTION.
-	zbknu(ZNR, ZNI, FNU, KODE, 1, CYR, CYI, NW, TOL, ELIM, ALIM)
+	ZNR, ZNI, FNU, KODE, _, CYR, CYI, NW, TOL, ELIM, ALIM = Zbknu(ZNR, ZNI, FNU, KODE, 1, CYR, CYI, NW, TOL, ELIM, ALIM)
 	if NW != 0 {
 		goto Eighty
 	}
@@ -1493,7 +1515,7 @@ Sixty:
 	}
 	IUF = 0
 	ASCLE = 1.0E+3 * dmach[1] / TOL
-	Zs1s2(ZNR, ZNI, C1R, C1I, C2R, C2I, NW, ASCLE, ALIM, IUF)
+	ZNR, ZNI, C1R, C1I, C2R, C2I, NW, ASCLE, ALIM, IUF = Zs1s2(ZNR, ZNI, C1R, C1I, C2R, C2I, NW, ASCLE, ALIM, IUF)
 	NZ = NZ + NW
 Seventy:
 	YR[1] = CSPNR*C1R - CSPNI*C1I + CSGNR*C2R - CSGNI*C2I
@@ -1511,7 +1533,7 @@ Eighty:
 // MEANS OF THE ASYMPTOTIC EXPANSION FOR LARGE CABS(Z) IN THE
 // REGION CABS(Z)>MAX(RL,FNU*FNU/2). NZ=0 IS A NORMAL return.
 // NZ<0 INDICATES AN OVERFLOW ON KODE=1.
-func zasyi(ZR, ZI, FNU float64, KODE, N int, YR, YI []float64, NZ int, RL, TOL, ELIM, ALIM float64) (
+func Zasyi(ZR, ZI, FNU float64, KODE, N int, YR, YI []float64, NZ int, RL, TOL, ELIM, ALIM float64) (
 	ZRout, ZIout, FNUout float64, KODEout, Nout int, YRout, YIout []float64, NZout int, RLout, TOLout, ELIMout, ALIMout float64) {
 	var AA, AEZ, AK, AK1I, AK1R, ARG, ARM, ATOL,
 		AZ, BB, BK, CKI, CKR, CONEI, CONER, CS1I, CS1R, CS2I, CS2R, CZI,
@@ -1607,6 +1629,7 @@ Twenty:
 	P1I = -P1I
 Thirty:
 	for K = 1; K <= IL; K++ {
+		fmt.Println("k = ", K)
 		SQK = FDN - 1.0E0
 		ATOL = S * math.Abs(SQK)
 		SGN = 1.0E0
@@ -1621,6 +1644,9 @@ Thirty:
 		BB = AEZ
 		DKR = EZR
 		DKI = EZI
+		// TODO(btracey): This loop is executed tens of thousands of times. Why?
+		// is that really necessary?
+		fmt.Println("preloop", CKR, CKI, DKR, DKI, SQK)
 		for J = 1; J <= JL; J++ {
 			tmp = complex(CKR, CKI) / complex(DKR, DKI)
 			STR = real(tmp)
@@ -1638,14 +1664,17 @@ Thirty:
 			BB = BB + AEZ
 			AK = AK + 8.0E0
 			SQK = SQK - AK
+			fmt.Println("j str sti", J, CS1R, CS1I)
 			if AA <= ATOL {
 				goto Fifty
 			}
 		}
 		goto OneTen
 	Fifty:
+		fmt.Println("Fifty")
 		S2R = CS1R
 		S2I = CS1I
+		fmt.Println("S2R, S2I", S2R, S2I)
 		if ZR+ZR >= ELIM {
 			goto Sixty
 		}
@@ -1654,23 +1683,34 @@ Thirty:
 		tmp = cmplx.Exp(complex(-TZR, -TZI))
 		STR = real(tmp)
 		STI = imag(tmp)
+		fmt.Println("STR, STI one", STR, STI)
 		tmp = complex(STR, STI) * complex(P1R, P1I)
 		STR = real(tmp)
 		STI = imag(tmp)
+		fmt.Println("STR, STI two", STR, STI)
 		tmp = complex(STR, STI) * complex(CS2R, CS2I)
 		STR = real(tmp)
 		STI = imag(tmp)
+		fmt.Println("STR, STI three", STR, STI)
+		fmt.Println("prepre 60", S2R, S2I)
 		S2R = S2R + STR
 		S2I = S2I + STI
+		fmt.Println("pre 60", S2R, S2I)
 	Sixty:
+		fmt.Println("Sixty")
+		fmt.Println("ak1r, ak1i", AK1R, AK1I)
 		FDN = FDN + 8.0E0*DFNU + 4.0E0
 		P1R = -P1R
 		P1I = -P1I
 		M = N - IL + K
+		fmt.Println("M = ", M)
+		fmt.Println(S2R*AK1R-S2I*AK1I, S2R*AK1I+S2I*AK1R)
+		fmt.Println("YR", S2R, AK1R, S2I, AK1I)
 		YR[M] = S2R*AK1R - S2I*AK1I
 		YI[M] = S2R*AK1I + S2I*AK1R
 	}
 	if N <= 2 {
+		fmt.Println("return n lt 2")
 		return ZR, ZI, FNU, KODE, N, YR, YI, NZ, RL, TOL, ELIM, ALIM
 	}
 	NN = N
@@ -1688,6 +1728,7 @@ Thirty:
 		K = K - 1
 	}
 	if KODED == 0 {
+		fmt.Println("zasyi koded 0")
 		return ZR, ZI, FNU, KODE, N, YR, YI, NZ, RL, TOL, ELIM, ALIM
 	}
 	tmp = cmplx.Exp(complex(CZR, CZI))
@@ -1698,18 +1739,21 @@ Thirty:
 		YI[I] = YR[I]*CKI + YI[I]*CKR
 		YR[I] = STR
 	}
+	fmt.Println("zasyi pre 100")
 	return ZR, ZI, FNU, KODE, N, YR, YI, NZ, RL, TOL, ELIM, ALIM
 OneHundred:
 	NZ = -1
+	fmt.Println("zasyi 100")
 	return ZR, ZI, FNU, KODE, N, YR, YI, NZ, RL, TOL, ELIM, ALIM
 OneTen:
 	NZ = -2
+	fmt.Println("zasyi 110")
 	return ZR, ZI, FNU, KODE, N, YR, YI, NZ, RL, TOL, ELIM, ALIM
 }
 
 // ZMLRI COMPUTES THE I BESSEL FUNCTION FOR RE(Z)>=0.0 BY THE
 // MILLER ALGORITHM NORMALIZED BY A NEUMANN SERIES.
-func zmlri(ZR, ZI, FNU float64, KODE, N int, YR, YI []float64, NZ int, TOL float64) (
+func Zmlri(ZR, ZI, FNU float64, KODE, N int, YR, YI []float64, NZ int, TOL float64) (
 	ZRout, ZIout, FNUout float64, KODEout, Nout int, YRout, YIout []float64, NZout int, TOLout float64) {
 	var ACK, AK, AP, AT, AZ, BK, CKI, CKR, CNORMI,
 		CNORMR, CONEI, CONER, FKAP, FKK, FLAM, FNF, PTI, PTR, P1I,
@@ -1928,7 +1972,7 @@ OneTen:
 // DUE TO UNDERFLOW. NZ<0 MEANS UNDERFLOW OCCURRED, BUT THE
 // CONDITION CABS(Z)<=2*SQRT(FNU+1) WAS VIOLATED AND THE
 // COMPUTATION MUST BE COMPLETED IN ANOTHER ROUTINE WITH N=N-ABS(NZ).
-func zseri(ZR, ZI, FNU float64, KODE, N int, YR, YI []float64, NZ int, TOL, ELIM, ALIM float64) (
+func Zseri(ZR, ZI, FNU float64, KODE, N int, YR, YI []float64, NZ int, TOL, ELIM, ALIM float64) (
 	ZRout, ZIout, FNUout float64, KODEout, Nout int, YRout, YIout []float64, NZout int, TOLout, ELIMout, ALIMout float64) {
 	var AA, ACZ, AK, AK1I, AK1R, ARM, ASCLE, ATOL,
 		AZ, CKI, CKR, COEFI, COEFR, CONEI, CONER, CRSCR, CZI, CZR, DFNU,
@@ -1973,6 +2017,7 @@ Twenty:
 	// UNDERFLOW TEST.
 	AK1R = CKR * DFNU
 	AK1I = CKI * DFNU
+	fmt.Println("fnup, idum", FNUP, IDUM)
 	AK = dgamln(FNUP, IDUM)
 	AK1R = AK1R - AK
 	if KODE == 2 {
@@ -1983,13 +2028,16 @@ Twenty:
 	}
 Thirty:
 	NZ = NZ + 1
+	fmt.Println("NZ, NN = ", NZ, NN)
 	YR[NN] = ZEROR
 	YI[NN] = ZEROI
 	if ACZ > DFNU {
+		fmt.Println("to one ninety")
 		goto OneNinety
 	}
 	NN = NN - 1
 	if NN == 0 {
+		fmt.Println("return 30")
 		return ZR, ZI, FNU, KODE, N, YR, YI, NZ, TOL, ELIM, ALIM
 	}
 	goto Twenty
@@ -2045,7 +2093,7 @@ Fifty:
 		if IFLAG == 0 {
 			goto Eighty
 		}
-		zuchk(S2R, S2I, NW, ASCLE, TOL)
+		S2R, S2I, NW, ASCLE, TOL = Zuchk(S2R, S2I, NW, ASCLE, TOL)
 		if NW != 0 {
 			goto Thirty
 		}
@@ -2063,6 +2111,7 @@ Fifty:
 		COEFI = STI * DFNU
 	}
 	if NN <= 2 {
+		fmt.Println("return 80")
 		return ZR, ZI, FNU, KODE, N, YR, YI, NZ, TOL, ELIM, ALIM
 	}
 	K = NN - 2
@@ -2083,6 +2132,7 @@ OneHundred:
 		AK = AK - 1.0E0
 		K = K - 1
 	}
+	fmt.Println("return 100")
 	return ZR, ZI, FNU, KODE, N, YR, YI, NZ, TOL, ELIM, ALIM
 
 	// RECUR BACKWARD WITH SCALED VALUES.
@@ -2111,7 +2161,8 @@ OneTwenty:
 			goto OneFourty
 		}
 	}
-	return
+	fmt.Println("return 120")
+	return ZR, ZI, FNU, KODE, N, YR, YI, NZ, TOL, ELIM, ALIM
 OneFourty:
 	IB = L + 1
 	if IB > NN {
@@ -2133,12 +2184,14 @@ OneSixty:
 	YI[1] = CONEI
 OneSeventy:
 	if N == 1 {
+		fmt.Println("return 170")
 		return ZR, ZI, FNU, KODE, N, YR, YI, NZ, TOL, ELIM, ALIM
 	}
 	for I = 2; I <= N; I++ {
 		YR[I] = ZEROR
 		YI[I] = ZEROI
 	}
+	fmt.Println("return 170 2")
 	return ZR, ZI, FNU, KODE, N, YR, YI, NZ, TOL, ELIM, ALIM
 
 	// return WITH NZ<0 if CABS(Z*Z/4)>FNU+N-NZ-1 COMPLETE
@@ -2146,6 +2199,7 @@ OneSeventy:
 
 OneNinety:
 	NZ = -NZ
+	fmt.Println("return 190", NZ)
 	return ZR, ZI, FNU, KODE, N, YR, YI, NZ, TOL, ELIM, ALIM
 }
 
@@ -2207,7 +2261,8 @@ Ten:
 
 func dgamln(z float64, ierr int) float64 {
 	if z < 0 {
-		panic("z lt 0")
+		return 0
+		// panic("z lt 0")
 	}
 	a, _ := math.Lgamma(z)
 	return a

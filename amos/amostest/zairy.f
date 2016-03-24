@@ -304,6 +304,9 @@ C-----------------------------------------------------------------------
       IF (ZI.LT.0.0D0) MR = -1
       CALL ZACAI(ZTAR, ZTAI, FNU, KODE, MR, 1, CYR, CYI, NN, RL, TOL,
      * ELIM, ALIM)
+      print *, "after zacai"
+      print *, ZTAR,ZTAI, FNU, KODE
+      print *, MR, CYR,CYI
       IF (NN.LT.0) GO TO 280
       NZ = NZ + NN
       GO TO 130

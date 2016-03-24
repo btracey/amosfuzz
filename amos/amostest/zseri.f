@@ -23,6 +23,8 @@ C     COMPLEX AK1,CK,COEF,CONE,CRSC,CSCL,CZ,CZERO,HZ,RZ,S1,S2,Y,Z
       DIMENSION YR(N), YI(N), WR(2), WI(2)
       DATA ZEROR,ZEROI,CONER,CONEI / 0.0D0, 0.0D0, 1.0D0, 0.0D0 /
 C
+
+      print *, "starting fortran, n = ", n
       NZ = 0
       AZ = ZABS(CMPLX(ZR,ZI,kind=KIND(1.0D0)))
       IF (AZ.EQ.0.0D0) GO TO 160
@@ -49,7 +51,9 @@ C     UNDERFLOW TEST
 C-----------------------------------------------------------------------
       AK1R = CKR*DFNU
       AK1I = CKI*DFNU
+      print *, "FNUP, IDUM", FNUP, IDUM
       AK = DGAMLN(FNUP,IDUM)
+      print *, "AK = ", AK
       AK1R = AK1R - AK
       IF (KODE.EQ.2) AK1R = AK1R - ZR
       IF (AK1R.GT.(-ELIM)) GO TO 40
@@ -186,5 +190,6 @@ C     THE CALCULATION IN CBINU WITH N=N-IABS(NZ)
 C-----------------------------------------------------------------------
   190 CONTINUE
       NZ = -NZ
+      print *, "fort return 190", NZ
       RETURN
       END
