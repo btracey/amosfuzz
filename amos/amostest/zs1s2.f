@@ -38,7 +38,9 @@ C     COMPLEX CZERO,C1,S1,S1D,S2,ZR
       IUF = IUF + 1
    10 CONTINUE
       AA = DMAX1(AS1,AS2)
-      IF (AA.GT.ASCLE) RETURN
+      IF (AA.GT.ASCLE) THEN
+        RETURN
+      END IF
       S1R = ZEROR
       S1I = ZEROI
       S2R = ZEROR

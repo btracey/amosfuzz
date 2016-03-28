@@ -53,7 +53,9 @@ C-----------------------------------------------------------------------
         CKR = CKR + RZR
         CKI = CKI + RZI
         AP = ZABS(CMPLX(P2R,P2I,kind=KIND(1.0D0)))
-        IF (AP.GT.TST*AK*AK) GO TO 20
+        IF (AP.GT.TST*AK*AK) THEN
+          GO TO 20
+        END IF
         AK = AK + 1.0D0
    10 CONTINUE
       GO TO 110

@@ -197,7 +197,9 @@ C-----------------------------------------------------------------------
         BK = BK + 18.0D0
    30 CONTINUE
    40 CONTINUE
-      IF (ID.EQ.1) GO TO 50
+      IF (ID.EQ.1) THEN
+        GO TO 50
+      END IF
       AIR = S1R*C1 - C2*(ZR*S2R-ZI*S2I)
       AII = S1I*C1 - C2*(ZR*S2I+ZI*S2R)
       IF (KODE.EQ.1) RETURN
@@ -304,9 +306,6 @@ C-----------------------------------------------------------------------
       IF (ZI.LT.0.0D0) MR = -1
       CALL ZACAI(ZTAR, ZTAI, FNU, KODE, MR, 1, CYR, CYI, NN, RL, TOL,
      * ELIM, ALIM)
-      print *, "after zacai"
-      print *, ZTAR,ZTAI, FNU, KODE
-      print *, MR, CYR,CYI
       IF (NN.LT.0) GO TO 280
       NZ = NZ + NN
       GO TO 130
